@@ -12,6 +12,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.remote.HideKeyboardStrategy;
 
 import com.qainfotech.security.DataEncryptor;
+import com.qainfotech.security.OprimeCustomException;
 import com.qainfotech.tap.oprime.TestSession;
 import com.galenframework.api.Galen;
 import com.galenframework.reports.model.LayoutReport;
@@ -40,8 +41,9 @@ import java.io.FileWriter;
 import java.io.File;
 
 /**
+ * 
+ * @author nimit.jain (Qainfotech)
  *
- * @author Nimit Jain
  */
 @Loggable(Loggable.DEBUG)
 public class Page {
@@ -86,7 +88,7 @@ public class Page {
         	}
         	catch(Exception e)
         	{
-        		e.getMessage();
+        		throw new OprimeCustomException("Some information: "+e);
         	}
         }
         
@@ -106,7 +108,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		e.getMessage();
+    		throw new OprimeCustomException("Some information: "+e);
     	}
         return result;
     }
@@ -143,127 +145,254 @@ public class Page {
             ((AppiumDriver)session.driver).hideKeyboard();
             result = true;
         } catch(Exception e){
-            e.getMessage();
+    		throw new OprimeCustomException("Some information: "+e);
         }
         
         return result;
     }
     
     /**
-     * 
+     * Method return the element
      * @param name
      * @return
      */
     public WebElement jsElement(String name){
-        return (WebElement)((JavascriptExecutor)session.driver).executeScript("return " + pageUI.element(name).locator);
-    }
-    
-    public WebElement element(String name){
-        YamlElement yamlElement = pageUI.element(name);
-        if(yamlElement.container != null){
-            WebElement container = findElement(yamlElement.container);
-            return (new WebDriverWait(session.driver, pageUI.timeout))
-                .until(ExpectedConditions.presenceOfNestedElementLocatedBy(
-                        container, findBy(yamlElement)));
-        }else{
-            return findElement(yamlElement);
-        }
-    }
-
-    public WebElement element(WebElement element, String name){
-        YamlElement yamlElement = pageUI.element(name);
-        return (new WebDriverWait(session.driver, pageUI.timeout))
-            .until(ExpectedConditions.presenceOfNestedElementLocatedBy(
-                    element, findBy(yamlElement)));
-    }
-    
-    public List<WebElement> elements(String name){
-        YamlElement yamlElement = pageUI.element(name);
-        if(yamlElement.container != null){
-            return (new WebDriverWait(session.driver, pageUI.timeout))
-                .until(ExpectedConditions.presenceOfNestedElementsLocatedBy(
-                        findBy(yamlElement.container), findBy(yamlElement)));
-        }
-        return findElements(yamlElement);
-    }
-    
-    public List<WebElement> elements(String containerElementName, String name){
-        YamlElement yamlElement = pageUI.element(name);
-        return (new WebDriverWait(session.driver, pageUI.timeout))
-            .until(ExpectedConditions.presenceOfNestedElementsLocatedBy(
-                    findBy(yamlElement.container), findBy(yamlElement)));
-    }    
-    
-    public WebElement visibleElement(String name){
-        YamlElement yamlElement = pageUI.element(name);
-        if(yamlElement.container != null){
-            WebElement container = findElement(yamlElement);
-            return (new WebDriverWait(session.driver, pageUI.timeout))
-                .until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(
-                        container, findBy(yamlElement))).get(0);
-        }
-        return findVisibleElement(yamlElement);
-    }
-    
-    public List<WebElement> visibleElements(String name){
-        YamlElement yamlElement = pageUI.element(name);
-        if(yamlElement.container != null){
-            WebElement container = findElement(yamlElement);
-            return (new WebDriverWait(session.driver, pageUI.timeout))
-                .until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(
-                        container, findBy(yamlElement)));
-        }
-        return findVisibleElements(yamlElement);
+    	try
+    	{
+    	       return (WebElement)((JavascriptExecutor)session.driver).executeScript("return " + pageUI.element(name).locator);   	       
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
     }
     
     /**
-     * 
+     * Method return the element
+     * @param name
+     * @return
+     */
+    public WebElement element(String name){
+    	try
+    	{
+            YamlElement yamlElement = pageUI.element(name);
+            if(yamlElement.container != null){
+                WebElement container = findElement(yamlElement.container);
+                return (new WebDriverWait(session.driver, pageUI.timeout))
+                    .until(ExpectedConditions.presenceOfNestedElementLocatedBy(
+                            container, findBy(yamlElement)));
+            }else{
+                return findElement(yamlElement);
+            }
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }
+
+    /**
+     * Method is used to return the element
+     * @param element
+     * @param name
+     * @return
+     */
+    public WebElement element(WebElement element, String name){
+    	try
+    	{
+            YamlElement yamlElement = pageUI.element(name);
+            return (new WebDriverWait(session.driver, pageUI.timeout))
+                .until(ExpectedConditions.presenceOfNestedElementLocatedBy(
+                        element, findBy(yamlElement)));
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }
+    
+    /**
+     * Method return elements
+     * @param name
+     * @return
+     */
+    public List<WebElement> elements(String name){
+    	try
+    	{
+            YamlElement yamlElement = pageUI.element(name);
+            if(yamlElement.container != null){
+                return (new WebDriverWait(session.driver, pageUI.timeout))
+                    .until(ExpectedConditions.presenceOfNestedElementsLocatedBy(
+                            findBy(yamlElement.container), findBy(yamlElement)));
+            }
+            return findElements(yamlElement);
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }
+    
+    /**
+     * Method return elements
+     * @param containerElementName
+     * @param name
+     * @return
+     */
+    public List<WebElement> elements(String containerElementName, String name){
+    	try
+    	{
+            YamlElement yamlElement = pageUI.element(name);
+            return (new WebDriverWait(session.driver, pageUI.timeout))
+                .until(ExpectedConditions.presenceOfNestedElementsLocatedBy(
+                        findBy(yamlElement.container), findBy(yamlElement)));
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }    
+    
+    /**
+     * Method return the visibleElement
+     * @param name
+     * @return
+     */
+    public WebElement visibleElement(String name){
+    	try
+    	{
+            YamlElement yamlElement = pageUI.element(name);
+            if(yamlElement.container != null){
+                WebElement container = findElement(yamlElement);
+                return (new WebDriverWait(session.driver, pageUI.timeout))
+                    .until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(
+                            container, findBy(yamlElement))).get(0);
+            }
+            return findVisibleElement(yamlElement);
+    		
+    	} catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }
+    
+    /**
+     * Method return visibleElements
+     * @param name
+     * @return
+     */
+    public List<WebElement> visibleElements(String name){
+    	try
+    	{
+            YamlElement yamlElement = pageUI.element(name);
+            if(yamlElement.container != null){
+                WebElement container = findElement(yamlElement);
+                return (new WebDriverWait(session.driver, pageUI.timeout))
+                    .until(ExpectedConditions.visibilityOfNestedElementsLocatedBy(
+                            container, findBy(yamlElement)));
+            }
+            return findVisibleElements(yamlElement);
+	
+    	}catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }
+    
+    /**
+     * Method return findElement
      * @param yamlElement
      * @return
      */
     protected WebElement findElement(YamlElement yamlElement){
-        if(pageUI.timeout > 0){
-            return (new WebDriverWait(session.driver, pageUI.timeout))
-                .until(ExpectedConditions.presenceOfElementLocated(
-                        findBy(yamlElement)));
-        }
-        return session.driver.findElement(findBy(yamlElement));
-    }
-    
-    private List<WebElement> findElements(YamlElement yamlElement){
-        if(pageUI.timeout > 0){
-            return (new WebDriverWait(session.driver, pageUI.timeout))
-                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(
-                        findBy(yamlElement)));
-        }
-        return session.driver.findElements(findBy(yamlElement));
-    }
-    
-    private WebElement findVisibleElement(YamlElement yamlElement){
-        if(pageUI.timeout > 0){
-            return (new WebDriverWait(session.driver, pageUI.timeout))
-                .until(ExpectedConditions.visibilityOfElementLocated(
-                        findBy(yamlElement)));
-        }
-        return session.driver.findElement(findBy(yamlElement));
-    }
-    
-    private List<WebElement> findVisibleElements(YamlElement yamlElement){
-        if(pageUI.timeout > 0){
-            return (new WebDriverWait(session.driver, pageUI.timeout))
-                .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(
-                        findBy(yamlElement)));
-        }
-        return session.driver.findElements(findBy(yamlElement));
+    	try
+    	{
+            if(pageUI.timeout > 0){
+                return (new WebDriverWait(session.driver, pageUI.timeout))
+                    .until(ExpectedConditions.presenceOfElementLocated(
+                            findBy(yamlElement)));
+            }
+            return session.driver.findElement(findBy(yamlElement));
+
+    	}catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
     }
     
     /**
-     * 
+     * Method returns findElements
      * @param yamlElement
      * @return
      */
-    private By findBy(YamlElement yamlElement){
-        switch(yamlElement.findBy){
+    protected List<WebElement> findElements(YamlElement yamlElement){
+    	try
+    	{
+            if(pageUI.timeout > 0){
+                return (new WebDriverWait(session.driver, pageUI.timeout))
+                    .until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+                            findBy(yamlElement)));
+            }
+            return session.driver.findElements(findBy(yamlElement));
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }
+    
+    /**
+     * Method return visibleElement
+     * @param yamlElement
+     * @return
+     */
+    protected WebElement findVisibleElement(YamlElement yamlElement){
+    	try
+    	{
+            if(pageUI.timeout > 0){
+                return (new WebDriverWait(session.driver, pageUI.timeout))
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            findBy(yamlElement)));
+            }
+            return session.driver.findElement(findBy(yamlElement));	
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }
+    
+    /**
+     * Method return visibleElements
+     * @param yamlElement
+     * @return
+     */
+    protected List<WebElement> findVisibleElements(YamlElement yamlElement){
+    	try
+    	{
+            if(pageUI.timeout > 0){
+                return (new WebDriverWait(session.driver, pageUI.timeout))
+                    .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(
+                            findBy(yamlElement)));
+            }
+            return session.driver.findElements(findBy(yamlElement));
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
+    }
+    
+    /**
+     * Method returns the locator
+     * @param yamlElement
+     * @return
+     * @throws OprimeCustomException 
+     */
+    protected By findBy(YamlElement yamlElement) throws OprimeCustomException{
+    	try
+    	{
+            switch(yamlElement.findBy){
             case("id"):
                 return By.id(yamlElement.locator);
             case("name"):
@@ -283,6 +412,11 @@ public class Page {
             case("className"):
                 return By.className(yamlElement.locator);
         }
+    	}
+    	catch(Exception e)
+    	{
+    		throw new OprimeCustomException("Some information: "+e);
+    	}
         return By.cssSelector(yamlElement.locator);
     }
     
@@ -301,8 +435,12 @@ public class Page {
         return session.driver.getTitle().equals(pageUI.expectedTitle);
     }
     
-    public void sendUnencryptedKeys(WebElement el, String encryptedText){
-        el.sendKeys(encryptor.decrypt(encryptedText));
+    public void sendUnencryptedKeys(WebElement el, String encryptedText) throws OprimeCustomException{
+        try {
+			el.sendKeys(encryptor.decrypt(encryptedText));
+		} catch (Exception e) {
+    		throw new OprimeCustomException("Some information: "+e);
+		}
     }
     
     /**
