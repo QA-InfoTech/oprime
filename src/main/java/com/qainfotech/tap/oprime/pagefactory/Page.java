@@ -6,13 +6,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.OutputType;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.NoSuchContextException;
 import io.appium.java_client.remote.HideKeyboardStrategy;
 
+import com.qainfotech.custom.exceptions.MyOwnNoSuchContextException;
+import com.qainfotech.custom.exceptions.MyOwnWebDriverException;
 import com.qainfotech.security.DataEncryptor;
-import com.qainfotech.security.OprimeCustomException;
 import com.qainfotech.tap.oprime.TestSession;
 import com.galenframework.api.Galen;
 import com.galenframework.reports.model.LayoutReport;
@@ -68,7 +71,6 @@ public class Page {
             this.hasContext = true;
         }
     }
-    
     public Page() {
 		// TODO Auto-generated constructor stub
 	}
@@ -76,8 +78,9 @@ public class Page {
     /**
      * Method is used to switch the context.
      * @return true/false
+     * @throws MyOwnNoSuchContextException
      */
-	public boolean switchContext(){
+	public boolean switchContext()throws MyOwnNoSuchContextException{
     	boolean result = false;
         if(hasContext)
         {
@@ -86,9 +89,13 @@ public class Page {
                 ((AppiumDriver)session.driver).context(pageUI.context);
                 result = true;
         	}
+        	catch(NoSuchContextException e)
+        	{
+        		throw new MyOwnNoSuchContextException(pageUI.context+ "is not present");
+        	}
         	catch(Exception e)
         	{
-        		throw new OprimeCustomException("Some information: "+e);
+        		throw new MyOwnNoSuchContextException(pageUI.context+ "is not present");
         	}
         }
         
@@ -98,17 +105,22 @@ public class Page {
 	/**
 	 * Method help to switch on native context
 	 * @return true/false
+	 * @throws MyOwnNoSuchContextException
 	 */
-    public boolean switchToNativeContext(){
+    public boolean switchToNativeContext() throws MyOwnNoSuchContextException{
     	boolean result = false;
     	try
     	{
     		((AppiumDriver)session.driver).context("NATIVE_APP");
     	    result = true;   
     	}
+    	catch(NoSuchContextException e)
+    	{
+    		throw new MyOwnNoSuchContextException("NATIVE_APP view is not present");
+    	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("NATIVE_APP view is not present");
     	}
         return result;
     }
@@ -136,16 +148,23 @@ public class Page {
     }
     
     /**
-     * Method is used to hide the keyboard.
+     * Method is used to hide keyboard.
      * @return true/false
+     * @throws MyOwnWebDriverException
      */
-    public boolean hideKeyboard(){
+    public boolean hideKeyboard() throws MyOwnWebDriverException{
     	boolean result = false;
         try{
             ((AppiumDriver)session.driver).hideKeyboard();
             result = true;
-        } catch(Exception e){
-    		throw new OprimeCustomException("Some information: "+e);
+        } 
+        catch(WebDriverException e)
+        {
+        	throw new MyOwnWebDriverException("Keyboard is closed.");
+        }
+        catch(Exception e)
+        {
+        	throw new MyOwnWebDriverException("Keyboard is closed.");
         }
         
         return result;
@@ -155,16 +174,21 @@ public class Page {
      * Method return the element
      * @param name
      * @return
+     * @throws MyOwnWebDriverException
      */
-    public WebElement jsElement(String name){
+    public WebElement jsElement(String name) throws MyOwnWebDriverException{
     	try
     	{
     	       return (WebElement)((JavascriptExecutor)session.driver).executeScript("return " + pageUI.element(name).locator);   	       
     	}
-    	catch(Exception e)
-    	{
-    		throw new OprimeCustomException("Some information: "+e);
-    	}
+        catch(WebDriverException e)
+        {
+        	throw new MyOwnWebDriverException(pageUI.element(name).locator+ " is not executed using JavaScriptExecutor");
+        }
+        catch(Exception e)
+        {
+        	throw new MyOwnWebDriverException(pageUI.element(name).locator+" is not executed using JavaScriptExecutor");
+        }
     }
     
     /**
@@ -187,7 +211,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
 
@@ -207,7 +231,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
     
@@ -229,7 +253,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
     
@@ -249,7 +273,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }    
     
@@ -272,7 +296,7 @@ public class Page {
     		
     	} catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
     
@@ -295,7 +319,7 @@ public class Page {
 	
     	}catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
     
@@ -316,7 +340,7 @@ public class Page {
 
     	}catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
     
@@ -337,7 +361,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
     
@@ -358,7 +382,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
     
@@ -379,7 +403,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
     }
     
@@ -387,9 +411,9 @@ public class Page {
      * Method returns the locator
      * @param yamlElement
      * @return
-     * @throws OprimeCustomException 
+     * @throws MyOwnNoSuchContextException 
      */
-    protected By findBy(YamlElement yamlElement) throws OprimeCustomException{
+    protected By findBy(YamlElement yamlElement) throws MyOwnNoSuchContextException{
     	try
     	{
             switch(yamlElement.findBy){
@@ -415,7 +439,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
     	}
         return By.cssSelector(yamlElement.locator);
     }
@@ -435,11 +459,11 @@ public class Page {
         return session.driver.getTitle().equals(pageUI.expectedTitle);
     }
     
-    public void sendUnencryptedKeys(WebElement el, String encryptedText) throws OprimeCustomException{
+    public void sendUnencryptedKeys(WebElement el, String encryptedText) throws MyOwnNoSuchContextException{
         try {
 			el.sendKeys(encryptor.decrypt(encryptedText));
 		} catch (Exception e) {
-    		throw new OprimeCustomException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Some information: "+e);
 		}
     }
     
