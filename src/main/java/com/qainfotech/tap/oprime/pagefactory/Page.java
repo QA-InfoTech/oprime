@@ -471,9 +471,10 @@ public class Page {
      * check all expected elements are displayed
      * 
      * @return 
+     * @throws MyOwnNoSuchContextException 
      */
     @Loggable(Loggable.INFO)
-    public Boolean isDisplayed(){
+    public Boolean isDisplayed() throws MyOwnNoSuchContextException{
         for(YamlElement yamlElement:pageUI.expectedElements()){
             if(!findElement(yamlElement).isDisplayed()){
                 return false;

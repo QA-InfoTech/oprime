@@ -1,6 +1,7 @@
 package com.qainfotech.tap.oprime.pagefactory;
 
 import com.jcabi.aspects.Loggable;
+import com.qainfotech.custom.exceptions.MyOwnNoSuchContextException;
 import com.qainfotech.tap.oprime.TestSession;
 
 /**
@@ -24,8 +25,9 @@ public class NativeViewPage extends Page{
 	
 	/**
 	 * Method is used to switch to Native context
+	 * @throws MyOwnNoSuchContextException 
 	 */
-	public Boolean isDisplayed(){
+	public Boolean isDisplayed() throws MyOwnNoSuchContextException{
         switchToNativeContext();
         return super.isDisplayed();
     }
