@@ -282,7 +282,7 @@ public class Page {
      * @param name
      * @return
      */
-    public WebElement visibleElement(String name){
+    public WebElement visibleElement(String name) throws MyOwnWebDriverException{
     	try
     	{
             YamlElement yamlElement = pageUI.element(name);
@@ -296,7 +296,7 @@ public class Page {
     		
     	} catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnWebDriverException(pageUI.element(name).locator+" is not correct "+e);
     	}
     }
     
