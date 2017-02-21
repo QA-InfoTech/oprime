@@ -1,47 +1,44 @@
 package com.qainfotech.tap.oprime.pagefactory;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+
+import javax.imageio.ImageIO;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.NoSuchContextException;
-import io.appium.java_client.remote.HideKeyboardStrategy;
-
-import com.qainfotech.custom.exceptions.MyOwnNoSuchContextException;
-import com.qainfotech.custom.exceptions.MyOwnWebDriverException;
-import com.qainfotech.security.DataEncryptor;
-import com.qainfotech.tap.oprime.TestSession;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.galenframework.api.Galen;
-import com.galenframework.reports.model.LayoutReport;
 import com.galenframework.reports.GalenTestInfo;
 import com.galenframework.reports.HtmlReportBuilder;
 import com.galenframework.reports.json.JsonReportBuilder;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.json.*;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
-import javax.imageio.ImageIO;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-
-import java.lang.reflect.Method;
-
+import com.galenframework.reports.model.LayoutReport;
 import com.jcabi.aspects.Loggable;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.File;
+import com.qainfotech.custom.exceptions.MyOwnNoSuchContextException;
+import com.qainfotech.custom.exceptions.MyOwnNoSuchElementException;
+import com.qainfotech.custom.exceptions.MyOwnWebDriverException;
+import com.qainfotech.security.DataEncryptor;
+import com.qainfotech.tap.oprime.TestSession;
+
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.NoSuchContextException;
 
 /**
  * 
@@ -196,7 +193,7 @@ public class Page {
      * @param name
      * @return
      */
-    public WebElement element(String name){
+    public WebElement element(String name) throws MyOwnNoSuchElementException{
     	try
     	{
             YamlElement yamlElement = pageUI.element(name);
@@ -209,9 +206,14 @@ public class Page {
                 return findElement(yamlElement);
             }
     	}
+    	
+    	catch(MyOwnNoSuchElementException e)
+    	{
+    		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
+    	}
     	catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
     	}
     }
 
@@ -221,7 +223,7 @@ public class Page {
      * @param name
      * @return
      */
-    public WebElement element(WebElement element, String name){
+    public WebElement element(WebElement element, String name) throws MyOwnNoSuchElementException{
     	try
     	{
             YamlElement yamlElement = pageUI.element(name);
@@ -229,9 +231,13 @@ public class Page {
                 .until(ExpectedConditions.presenceOfNestedElementLocatedBy(
                         element, findBy(yamlElement)));
     	}
+    	catch(MyOwnNoSuchElementException e)
+    	{
+    		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
+    	}
     	catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
     	}
     }
     
@@ -240,7 +246,7 @@ public class Page {
      * @param name
      * @return
      */
-    public List<WebElement> elements(String name){
+    public List<WebElement> elements(String name) throws MyOwnNoSuchElementException{
     	try
     	{
             YamlElement yamlElement = pageUI.element(name);
@@ -251,9 +257,13 @@ public class Page {
             }
             return findElements(yamlElement);
     	}
+    	catch(MyOwnNoSuchElementException e)
+    	{
+    		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
+    	}
     	catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
     	}
     }
     
@@ -263,7 +273,7 @@ public class Page {
      * @param name
      * @return
      */
-    public List<WebElement> elements(String containerElementName, String name){
+    public List<WebElement> elements(String containerElementName, String name) throws MyOwnNoSuchElementException{
     	try
     	{
             YamlElement yamlElement = pageUI.element(name);
@@ -271,9 +281,13 @@ public class Page {
                 .until(ExpectedConditions.presenceOfNestedElementsLocatedBy(
                         findBy(yamlElement.container), findBy(yamlElement)));
     	}
+    	catch(MyOwnNoSuchElementException e)
+    	{
+    		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
+    	}
     	catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
     	}
     }    
     
@@ -282,7 +296,7 @@ public class Page {
      * @param name
      * @return
      */
-    public WebElement visibleElement(String name) throws MyOwnWebDriverException{
+    public WebElement visibleElement(String name) throws MyOwnNoSuchElementException{
     	try
     	{
             YamlElement yamlElement = pageUI.element(name);
@@ -294,9 +308,14 @@ public class Page {
             }
             return findVisibleElement(yamlElement);
     		
-    	} catch(Exception e)
+    	}
+    	catch(MyOwnNoSuchElementException e)
     	{
-    		throw new MyOwnWebDriverException(pageUI.element(name).locator+" is not correct "+e);
+    		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
+    	}
+    	catch(Exception e)
+    	{
+    		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
     	}
     }
     
@@ -328,7 +347,7 @@ public class Page {
      * @param yamlElement
      * @return
      */
-    protected WebElement findElement(YamlElement yamlElement){
+    protected WebElement findElement(YamlElement yamlElement) throws MyOwnNoSuchElementException{
     	try
     	{
             if(pageUI.timeout > 0){
@@ -338,10 +357,14 @@ public class Page {
             }
             return session.driver.findElement(findBy(yamlElement));
 
-    	}catch(Exception e)
-    	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
-    	}
+            catch(MyOwnNoSuchElementException e)
+        	{
+        		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
+        	}
+        	catch(Exception e)
+        	{
+        		throw new MyOwnNoSuchElementException(pageUI.element(name)+" not found" +e);
+        	}
     }
     
     /**
@@ -359,9 +382,13 @@ public class Page {
             }
             return session.driver.findElements(findBy(yamlElement));
     	}
+    	catch(MyOwnNoSuchElementException e)
+    	{
+    		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
+    	}
     	catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
     	}
     }
     
@@ -370,7 +397,7 @@ public class Page {
      * @param yamlElement
      * @return
      */
-    protected WebElement findVisibleElement(YamlElement yamlElement){
+    protected WebElement findVisibleElement(YamlElement yamlElement) throws MyOwnNoSuchElementException{
     	try
     	{
             if(pageUI.timeout > 0){
@@ -380,9 +407,13 @@ public class Page {
             }
             return session.driver.findElement(findBy(yamlElement));	
     	}
+    	catch(MyOwnNoSuchElementException e)
+    	{
+    		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
+    	}
     	catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
     	}
     }
     
@@ -391,7 +422,7 @@ public class Page {
      * @param yamlElement
      * @return
      */
-    protected List<WebElement> findVisibleElements(YamlElement yamlElement){
+    protected List<WebElement> findVisibleElements(YamlElement yamlElement) throws MyOwnNoSuchElementException{
     	try
     	{
             if(pageUI.timeout > 0){
@@ -401,9 +432,13 @@ public class Page {
             }
             return session.driver.findElements(findBy(yamlElement));
     	}
+    	catch(MyOwnNoSuchElementException e)
+    	{
+    		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
+    	}
     	catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchElementException(yamlElement+" not found" +e);
     	}
     }
     
@@ -439,7 +474,7 @@ public class Page {
     	}
     	catch(Exception e)
     	{
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException(yamlElement.locator+ " is not correct. Please check "+e);
     	}
         return By.cssSelector(yamlElement.locator);
     }
@@ -455,15 +490,23 @@ public class Page {
     }
     
     @Loggable(Loggable.INFO)
-    public Boolean hasExpectedTitle(){
-        return session.driver.getTitle().equals(pageUI.expectedTitle);
+    public Boolean hasExpectedTitle() throws MyOwnWebDriverException{
+    }
+    try
+    {
+        return session.driver.getTitle().equals(pageUI.expectedTitle);	
+    }
+    catch(MyOwnWebDriverException e)
+    {
+    	throw new MyOwnWebDriverException(session.driver.getTitle()+ "and expectedTitle: "+pageUI.expectedTitle+" does not matched.");
+    }
     }
     
     public void sendUnencryptedKeys(WebElement el, String encryptedText) throws MyOwnNoSuchContextException{
         try {
 			el.sendKeys(encryptor.decrypt(encryptedText));
 		} catch (Exception e) {
-    		throw new MyOwnNoSuchContextException("Some information: "+e);
+    		throw new MyOwnNoSuchContextException("Check sendUnencryptedKeys method: "+e);
 		}
     }
     
